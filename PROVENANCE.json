@@ -1,0 +1,107 @@
+{
+  "package": "obix-compiler-emit",
+  "dir": "compiler/obix-compiler-emit",
+  "importedBy": "scripts/recovery/import-packages.mjs",
+  "snapshot": "snap-20260924T142414Z",
+  "stage": "stage-2 lift-and-shift (base owner; later stages repair/merge)",
+  "sources": [
+    {
+      "label": "upstream:obix-monorepo-2026@4e5295a",
+      "repo": "obix-monorepo-2026",
+      "url": "https://github.com/obinexusmk2/obix-monorepo-2026",
+      "sha": "4e5295a09e3799f5490e1d655e15ab4bf865fbf7",
+      "path": "packages/obix-compiler",
+      "license": "MIT",
+      "licenseFileUpstream": false,
+      "filesImported": 6,
+      "filesExcluded": 2
+    }
+  ],
+  "originalManifest": {
+    "name": "obix-compiler",
+    "version": "0.2.1",
+    "license": "MIT",
+    "bin": null,
+    "scripts": {
+      "build": "tsc -p tsconfig.json"
+    }
+  },
+  "transforms": [
+    "package.json regenerated (lockstep version, exact internal pins, exports with \"types\" first, standard scripts)",
+    "tsconfig.json generated (NodeNext via tsconfig.base.json; @types/node enabled; removeComments: true, as the Level-0 lineage was built (its dist purity tests grep emitted JS))",
+    "internal specifiers renamed: obix-spec×6→@obinexusltd/obix-core-spec, obix-parser×1→@obinexusltd/obix-compiler-parser, obix-template×1→@obinexusltd/obix-compiler-template, obix-styles×1→@obinexusltd/obix-compiler-styles, obix-accessibility×1→@obinexusltd/obix-compiler-a11y, obix-ir×2→@obinexusltd/obix-core-ir, obix-validator×1→@obinexusltd/obix-compiler-validator, obix-equivalence×1→@obinexusltd/obix-compiler-equivalence, ../../obix-timer/×1→../../../tests/fixtures/timer/",
+    "relative imports given \".js\"/\"/index.js\" extensions: 0",
+    "dependencies dropped: @obinexusltd/obix-core-ir (declared in dependencies, never imported)",
+    "dependencies added: @obinexusltd/obix-compiler-equivalence (imported by tests only → devDependency)",
+    "LICENSE generated from the declared MIT license (upstream repo had no LICENSE file)"
+  ],
+  "localFixes": [
+    {
+      "stage": "stage-6",
+      "files": [
+        "src/index.ts",
+        "src/compile.ts",
+        "src/emit.ts",
+        "test/compile.test.mjs"
+      ],
+      "why": "Stage 6 repairs found by the corpus and the process tests: compileFile hashes the working-directory-relative path (componentPath), so one file emits the same bytes however it is named and wherever the project is checked out (the scope token depended on the path as typed); a missing <template> / <script> now yields OBIX-P001 / OBIX-P002 (only the generic S005 was reported); an emit mode outside linked/bare throws UnsupportedFeatureError (an unknown mode was emitted as linked under a header naming it). 3 new tests."
+    },
+    {
+      "stage": "stage-6",
+      "files": [
+        "README.md"
+      ],
+      "why": "Stage 6 docs: the retired bare Level-0 names (npm tombstones: `npm install obix-parser` cannot work) replaced by the scoped package names (D-01, migration-table.md). The reference to a gate script that does not exist here is replaced by the tests; reproducible output (componentPath), diagnostics and the emit-mode rule are documented."
+    },
+    {
+      "stage": "vuets-phase-1",
+      "files": [
+        "package.json",
+        "src/compile.ts",
+        "README.md"
+      ],
+      "why": "D-46: the Level-0 parser is now @obinexusltd/obix-compiler-legacy-parser (the name obix-compiler-parser belongs to the Vue SFC parser of the new pipeline). Dependency and import renamed; no behaviour change."
+    },
+    {
+      "stage": "vuets-phase-2",
+      "files": [
+        "package.json",
+        "src/compile.ts",
+        "README.md"
+      ],
+      "why": "D-46: the Level-0 template analyser is now @obinexusltd/obix-compiler-legacy-template (the name obix-compiler-template belongs to the Vue template frontend of the new pipeline). Dependency and import renamed; no behaviour change."
+    }
+  ],
+  "scopeScrub": {
+    "rule": "scripts/recovery/scrub-rules.mjs (brief: no other OBINexus projects)",
+    "replacementsPerFile": {}
+  },
+  "authoredOverlay": [],
+  "excluded": [
+    "dist/**",
+    "node_modules/**",
+    "lockfiles",
+    "tsconfig*.json (regenerated)",
+    ".gitignore",
+    ".github/**",
+    "coverage/**"
+  ],
+  "unresolvedRelativeImports": [],
+  "note": null,
+  "renamedFrom": [
+    {
+      "name": "@obinexusltd/obix-compiler-emit",
+      "dir": "compiler/obix-compiler-emit",
+      "stage": "unscoped-naming",
+      "why": "D-102 (2026-09-29): OBIX packages are named without an npm scope — previous name @obinexusltd/obix-compiler-emit, current name obix-compiler-emit (docs/recovery/unscoped-migration.md); the directory, version and exports are unchanged"
+    }
+  ],
+  "export": {
+    "from": "https://github.com/obinexusmk2/obix-monorepo",
+    "branch": "recovery/obix-api-preserving-rebuild",
+    "commit": "69cafc94910c1add865a520877617ac307668875",
+    "directory": "compiler/obix-compiler-emit",
+    "exportedBy": "scripts/release/export-repos.mjs",
+    "note": "a clean initial commit of this package; the monorepo history is not imported (D-103). Local machine paths in this record are replaced by <local workspace>."
+  }
+}

@@ -1,0 +1,87 @@
+<style>
+  .Timer { display: grid; gap: 0.5rem; font: 1rem/1.4 system-ui, sans-serif; }
+  .Timer__display { font-size: 2rem; font-variant-numeric: tabular-nums; }
+  .Timer__display--finished { color: #b00020; }
+  .Timer__status { min-height: 1.4em; }
+  .Timer__controls { display: flex; gap: 0.5rem; }
+  .Timer__button { padding: 0.4rem 0.8rem; }
+  .Timer__hint { margin: 0; font-size: 0.875rem; }
+</style>
+
+<template>
+  <div class="Timer" role="timer" aria-label="{label}">
+    <output class="Timer__display">{formattedTime}</output>
+    <p class="Timer__status" role="status" aria-live="polite">{statusLabel}</p>
+    <div class="Timer__controls">
+      <button type="button" class="Timer__button" on:click="Start" disabled="{cannotStart}">Start</button>
+      <button type="button" class="Timer__button" on:click="Stop" disabled="{stopped}">Stop</button>
+      <button type="button" class="Timer__button" on:click="Reset">Reset</button>
+    </div>
+    <p class="Timer__hint" obix:if="finished">Time's up. Reset to start again.</p>
+  </div>
+</template>
+
+<script>
+const state = { seconds: 0, running: false };
+const props = { label: "Timer", limitSeconds: 5, idleText: "Ready" };
+
+const actions = {
+  Start(state, _payload, props) {
+    if (state.running) return state;
+    if (state.seconds >= props.limitSeconds) return state;
+    return { ...state, running: true };
+  },
+  Stop(state) {
+    if (!state.running) return state;
+    return { ...state, running: false };
+  },
+  Reset(state) {
+    return { ...state, seconds: 0, running: false };
+  },
+  Tick(state, _payload, props) {
+    if (!state.running) return state;
+    if (state.seconds >= props.limitSeconds) return { ...state, running: false };
+    const seconds = state.seconds + 1;
+    if (seconds >= props.limitSeconds) return { ...state, seconds, running: false };
+    return { ...state, seconds };
+  }
+};
+
+const derived = {
+  formattedTime({ seconds }) {
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+  },
+  finished({ running, seconds }, { limitSeconds }) {
+    return !running && seconds >= limitSeconds;
+  },
+  statusLabel({ running, seconds }, { idleText, limitSeconds }) {
+    if (!running && seconds >= limitSeconds) return "Finished";
+    if (running) return "Running";
+    if (seconds > 0) return "Paused";
+    return idleText;
+  },
+  visualState({ running, seconds }, { limitSeconds }) {
+    if (!running && seconds >= limitSeconds) return "finished";
+    return running ? "running" : "idle";
+  },
+  cannotStart({ running, seconds }, { limitSeconds }) {
+    return running || seconds >= limitSeconds;
+  },
+  stopped({ running }) {
+    return !running;
+  },
+  atLimit({ seconds }, { limitSeconds }) {
+    return seconds >= limitSeconds;
+  }
+};
+
+const effects = {
+  tick: {
+    every: 1000,
+    while: ({ running }) => running,
+    dispatch: "Tick"
+  }
+};
+</script>
